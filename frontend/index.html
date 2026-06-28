@@ -394,11 +394,17 @@ footer{background:var(--sf-lo);border-top:1px solid rgba(57,255,20,.1);padding:3
     <div class="fst"><div class="ld"></div>ALL SYSTEMS OPERATIONAL</div>
   </div>
 </footer>
+<script src="config.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
 <script>
 // ============================================================
 // MODAL SYSTEM - simple, global, always works
 // ============================================================
+function apiUrl(path) {
+  var base = (window.VOLTCHAIN_API_BASE || '').replace(/\/$/, '');
+  return base + path;
+}
+
 var _modalTimer = null;
 function openModal(title, icon, status, logStr) {
   var modal = document.getElementById('voltchain-modal');
@@ -505,7 +511,7 @@ function sendChat(e) {
   };
   
   if (window.location.protocol.startsWith('http')) {
-    fetch('/api/analyst/chat', {
+    fetch(apiUrl('/api/analyst/chat'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text })
@@ -567,7 +573,7 @@ function startLocalTelemetry() {
 if (window.location.protocol.startsWith('http')) {
   // Try live SSE stream
   try {
-    var evtSrc = new EventSource('/api/telemetry/stream');
+    var evtSrc = new EventSource(apiUrl('/api/telemetry/stream'));
     evtSrc.onmessage = function(e) {
       try {
         var d = JSON.parse(e.data);

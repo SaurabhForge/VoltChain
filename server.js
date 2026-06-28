@@ -4,12 +4,41 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const frontendDir = path.join(__dirname, 'frontend');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const allowedOrigins = (process.env.CORS_ORIGIN || '*')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use((req, res, next) => {
+  const requestOrigin = req.headers.origin;
+
+  if (allowedOrigins.includes('*')) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  } else if (requestOrigin && allowedOrigins.includes(requestOrigin)) {
+    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+    res.setHeader('Vary', 'Origin');
+  }
+
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
 
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use(express.static(frontendDir));
+
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
 
 // Simulated in-memory database
 let fleetStats = {
@@ -165,12 +194,12 @@ app.get('/api/maintenance/schedule', (req, res) => {
 // Fallback to serving index.html
 app.use((req, res, next) => {
   if (req.method === 'GET' && (!req.path.includes('.') || req.path.endsWith('.html'))) {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(frontendDir, 'index.html'));
   } else {
     next();
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`VoltChain Backend is running at http://localhost:${PORT}`);
 });
