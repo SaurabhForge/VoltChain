@@ -1,5 +1,5 @@
 /**
- * VoltChain — Screenshot & PDF Generator
+ * VoltChain — Technical Report and PDF Generator
  * Run: node scripts/generate-docs.mjs
  */
 
@@ -146,410 +146,457 @@ const html = `<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>VoltChain — Project Submission Reference</title>
+<title>VoltChain — Technical Reference Report</title>
 <style>
 /* ── Reset & Base ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 10.5pt; }
+html { font-size: 10pt; }
 body {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  color: #1e293b;
+  font-family: 'Georgia', Georgia, 'Times New Roman', serif;
+  color: #334155;
   background: #fff;
   line-height: 1.6;
 }
 
-/* ── Page Layout ── */
-@page { size: A4; margin: 20mm 20mm 20mm 20mm; }
-@page :first { margin-top: 0; }
+/* ── Page Layout & Margins (A4 Standard) ── */
+@page {
+  size: A4;
+  margin-top: 25mm;
+  margin-bottom: 25mm;
+  margin-left: 20mm;
+  margin-right: 20mm;
+}
+@page :first {
+  margin: 0; /* Cover page fills entire space with zero margins */
+}
+
+/* ── Fixed Header & Footer (pages 2+) ── */
+.header-fixed {
+  position: fixed;
+  top: -15mm;
+  left: 0;
+  right: 0;
+  height: 10mm;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #cbd5e1;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 7.5pt;
+  color: #64748b;
+  z-index: 1;
+}
+.footer-fixed {
+  position: fixed;
+  bottom: -15mm;
+  left: 0;
+  right: 0;
+  height: 10mm;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #cbd5e1;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 7.5pt;
+  color: #64748b;
+  z-index: 1;
+}
 
 /* ── Typography ── */
-h1 { font-size: 28pt; font-weight: 700; color: #0f172a; letter-spacing: -0.5px; margin-bottom: 12px; }
-h2 { font-size: 18pt; font-weight: 700; color: #0f172a; margin-top: 30px; margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; page-break-after: avoid; }
-h3 { font-size: 13pt; font-weight: 700; color: #1e293b; margin: 22px 0 10px; page-break-after: avoid; }
+h1, h2, h3, h4 {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #0f172a;
+}
+h1 { font-size: 28pt; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+h2 { font-size: 16pt; font-weight: 700; margin-top: 0; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; page-break-after: avoid; }
+h3 { font-size: 11pt; font-weight: 700; margin: 18px 0 8px; text-transform: uppercase; letter-spacing: 0.5px; page-break-after: avoid; }
 p  { margin-bottom: 12px; text-align: justify; }
 ul, ol { padding-left: 20px; margin-bottom: 12px; }
-li { margin-bottom: 6px; }
+li { margin-bottom: 5px; }
 strong { font-weight: 700; color: #0f172a; }
-em { font-style: italic; }
 code {
   font-family: 'Courier New', monospace;
-  font-size: 9pt;
+  font-size: 8.5pt;
   background: #f1f5f9;
-  padding: 2px 6px;
-  border-radius: 4px;
-  border: 1px solid #cbd5e1;
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 1px solid #e2e8f0;
   color: #0f172a;
 }
 pre {
   font-family: 'Courier New', monospace;
-  font-size: 8.5pt;
+  font-size: 8pt;
   background: #0f172a;
   color: #39ff14;
-  padding: 12px 16px;
-  border-radius: 6px;
-  margin: 16px 0;
+  padding: 10px 14px;
+  border-radius: 4px;
+  margin: 12px 0;
   overflow-x: auto;
   line-height: 1.4;
   page-break-inside: avoid;
 }
 
-/* ── Cover Page ── */
+/* ── Cover Page (Minimalist & Editorial) ── */
 .cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 210mm;
   height: 297mm;
+  background: #ffffff;
+  z-index: 100;
   display: flex;
   flex-direction: column;
-  position: relative;
-  background: #090d16;
-  page-break-after: always;
-  overflow: hidden;
+  justify-content: space-between;
+  padding: 40mm 25mm 30mm 25mm;
+  box-sizing: border-box;
 }
-.cover-top-bar {
-  height: 8px;
-  background: linear-gradient(90deg, #39ff14, #00d084, #0060ff);
-}
-.cover-body {
-  flex: 1;
+.cover-top {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding: 50px 60px;
+  gap: 15px;
 }
 .cover-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(57, 255, 20, 0.08);
-  border: 1px solid rgba(57, 255, 20, 0.3);
+  gap: 6px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
   border-radius: 100px;
-  padding: 6px 16px;
-  font-family: 'Courier New', monospace;
-  font-size: 8pt;
-  letter-spacing: 0.15em;
+  padding: 4px 12px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 7.5pt;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #39ff14;
-  margin-bottom: 30px;
+  color: #166534;
   width: fit-content;
 }
 .cover-badge .dot {
-  width: 6px; height: 6px;
+  width: 5px; height: 5px;
   border-radius: 50%;
-  background: #39ff14;
-  box-shadow: 0 0 8px #39ff14;
+  background: #10b981;
 }
-.cover-logo-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-.cover-logo-icon {
-  width: 60px; height: 60px;
-  background: linear-gradient(135deg, #39ff14, #00d084);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 30px rgba(57, 255, 20, 0.4);
-}
-.cover-logo-icon svg { width: 32px; height: 32px; stroke: #090d16; }
-.cover-wordmark {
-  font-size: 32pt;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: -1px;
-}
-.cover-wordmark span { color: #39ff14; }
 .cover-title {
-  font-size: 36pt;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 34pt;
   font-weight: 800;
-  color: #fff;
-  line-height: 1.15;
-  letter-spacing: -1px;
-  margin-bottom: 20px;
+  color: #0f172a;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  margin-top: 10px;
 }
-.cover-title .accent { color: #39ff14; }
+.cover-title span {
+  color: #10b981;
+}
+.cover-line {
+  width: 40mm;
+  height: 3px;
+  background: #10b981;
+  margin-top: 5px;
+}
 .cover-subtitle {
-  font-size: 13pt;
-  color: #94a3b8;
-  max-width: 520px;
+  font-size: 12pt;
+  color: #475569;
+  max-width: 460px;
   line-height: 1.6;
-  margin-bottom: 50px;
+  margin-top: 20px;
 }
-.cover-stats {
+.cover-middle {
   display: flex;
-  gap: 48px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  padding-top: 32px;
-  margin-bottom: 50px;
+  gap: 36px;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 20px 0;
+}
+.cover-stat {
+  display: flex;
+  flex-direction: column;
 }
 .cover-stat-val {
   font-family: 'Courier New', monospace;
-  font-size: 24pt;
+  font-size: 20pt;
   font-weight: 700;
-  color: #39ff14;
+  color: #0f172a;
 }
 .cover-stat-lbl {
-  font-family: 'Courier New', monospace;
-  font-size: 7.5pt;
-  letter-spacing: 0.15em;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 7pt;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #94a3b8;
-  margin-top: 4px;
+  color: #64748b;
+  margin-top: 2px;
 }
-.cover-meta {
+.cover-bottom {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 9pt;
+  color: #64748b;
+  line-height: 1.6;
 }
-.cover-meta-left { font-size: 9.5pt; color: #94a3b8; line-height: 1.8; }
-.cover-meta-left strong { color: #f1f5f9; }
-.cover-version {
+.cover-meta strong {
+  color: #334155;
+}
+.cover-tag {
   font-family: 'Courier New', monospace;
-  font-size: 8.5pt;
-  color: #39ff14;
-  border: 1px solid rgba(57,255,20,0.4);
+  font-size: 8pt;
+  color: #10b981;
+  border: 1px solid #cbd5e1;
   border-radius: 4px;
-  padding: 5px 14px;
-  background: rgba(57,255,20,0.05);
-}
-.cover-glow {
-  position: absolute;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(57,255,20,0.08), transparent 70%);
-  border-radius: 50%;
-  top: -150px; right: -150px;
-  pointer-events: none;
-}
-.cover-bottom-bar {
-  height: 4px;
-  background: #39ff14;
+  padding: 4px 10px;
+  background: #f8fafc;
 }
 
 /* ── Section Dividers ── */
 .chapter {
   page-break-before: always;
+  position: relative;
 }
 .chapter:first-of-type { page-break-before: avoid; }
 
 .section-label {
-  font-family: 'Courier New', monospace;
-  font-size: 8pt;
-  letter-spacing: 0.2em;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 7.5pt;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #00d084;
+  color: #10b981;
   font-weight: 700;
-  margin-bottom: 8px;
-}
-.section-title {
-  font-size: 22pt;
-  font-weight: 800;
-  color: #0f172a;
-  border-bottom: 3px solid #39ff14;
-  padding-bottom: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 4px;
 }
 
-/* ── Highlights / Warnings / Info Boxes ── */
+/* ── Callout Boxes ── */
 .highlight-box {
   background: #f0fdf4;
-  border-left: 4px solid #00d084;
-  padding: 16px 20px;
-  border-radius: 0 8px 8px 0;
-  margin: 18px 0;
+  border-left: 3px solid #10b981;
+  padding: 12px 16px;
+  border-radius: 0 4px 4px 0;
+  margin: 14px 0;
   page-break-inside: avoid;
 }
-.highlight-box p { margin: 0; color: #14532d; font-size: 10pt; }
+.highlight-box p { margin: 0; color: #166534; font-size: 9.5pt; }
 
 .warning-box {
   background: #fffbeb;
-  border-left: 4px solid #f59e0b;
-  padding: 16px 20px;
-  border-radius: 0 8px 8px 0;
-  margin: 18px 0;
+  border-left: 3px solid #f59e0b;
+  padding: 12px 16px;
+  border-radius: 0 4px 4px 0;
+  margin: 14px 0;
   page-break-inside: avoid;
 }
-.warning-box p { margin: 0; color: #78350f; font-size: 10pt; }
+.warning-box p { margin: 0; color: #78350f; font-size: 9.5pt; }
 
 .info-box {
   background: #eff6ff;
-  border-left: 4px solid #3b82f6;
-  padding: 16px 20px;
-  border-radius: 0 8px 8px 0;
-  margin: 18px 0;
+  border-left: 3px solid #3b82f6;
+  padding: 12px 16px;
+  border-radius: 0 4px 4px 0;
+  margin: 14px 0;
   page-break-inside: avoid;
 }
-.info-box p { margin: 0; color: #1e3a8a; font-size: 10pt; }
+.info-box p { margin: 0; color: #1e3a8a; font-size: 9.5pt; }
 
-/* ── Tables ── */
+/* ── Academic Table Styling (McKinsey Style) ── */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 20px 0;
-  font-size: 9.5pt;
+  margin: 16px 0;
+  font-size: 9pt;
   page-break-inside: avoid;
 }
 thead th {
-  background: #0f172a;
-  color: #fff;
-  padding: 10px 14px;
+  border-bottom: 2px solid #0f172a;
+  color: #0f172a;
+  padding: 8px 10px;
   text-align: left;
-  font-family: 'Courier New', monospace;
-  font-size: 8pt;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 1px solid #0f172a;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 700;
 }
 tbody td {
-  padding: 10px 14px;
-  border: 1px solid #e2e8f0;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e2e8f0;
   vertical-align: top;
 }
 tbody tr:nth-child(even) td { background: #f8fafc; }
-tbody tr:hover td { background: #f0fdf4; }
 
-/* ── Figures & Images ── */
+/* ── Figures & Screenshots ── */
 figure {
-  margin: 22px 0;
+  margin: 14px 0;
   page-break-inside: avoid;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 figure img {
   width: 100%;
+  max-height: 85mm; /* Prevents overflow to next page */
+  object-fit: cover;
   display: block;
 }
 figcaption {
   background: #f8fafc;
   border-top: 1px solid #e2e8f0;
-  padding: 8px 16px;
-  font-size: 8.5pt;
+  padding: 6px 12px;
+  font-size: 8pt;
   color: #64748b;
   font-style: italic;
   font-family: 'Courier New', monospace;
+  text-align: center;
 }
 
-/* ── Two-column layout ── */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+/* ── Two-column Cards ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; }
 .card {
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 16px;
-  background: #fff;
+  border-radius: 6px;
+  padding: 12px;
+  background: #f8fafc;
 }
 .card-title {
-  font-size: 10.5pt;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 9.5pt;
   font-weight: 700;
   color: #0f172a;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 .card-title .tag {
   font-family: 'Courier New', monospace;
-  font-size: 7pt;
+  font-size: 6.5pt;
   background: #dcfce7;
   color: #166534;
-  padding: 2px 6px;
-  border-radius: 3px;
+  padding: 1px 4px;
+  border-radius: 2px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
 }
-.tag-warn { background: #fef3c7; color: #92400e; }
-.card p  { font-size: 9.5pt; color: #475569; margin: 0; }
+.tag-warn { background: #fee2e2 !important; color: #991b1b !important; }
+.card p  { font-size: 9pt; color: #475569; margin: 0; }
 
 /* ── Status Badges ── */
 .badge {
   display: inline-block;
   font-family: 'Courier New', monospace;
-  font-size: 7.5pt;
-  letter-spacing: 0.08em;
+  font-size: 7pt;
   text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 99px;
+  padding: 2px 6px;
+  border-radius: 4px;
   font-weight: 700;
 }
 .badge-green { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
 .badge-amber { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
 .badge-red   { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
 
-/* ── Print optimization ── */
-@media print {
-  .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  thead th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .highlight-box, .warning-box, .info-box {
-    -webkit-print-color-adjust: exact; print-color-adjust: exact;
-  }
+/* ── TOC ── */
+.toc-container {
+  margin: 15px 0 25px 0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 15px 20px;
 }
+.toc-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px dotted #cbd5e1;
+  padding: 5px 0;
+  font-size: 9.5pt;
+}
+.toc-item .num {
+  font-family: 'Courier New', monospace;
+  font-size: 8.5pt;
+  color: #10b981;
+  min-width: 25px;
+  font-weight: bold;
+}
+.toc-item .title { flex: 1; padding: 0 8px; font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 600; color: #334155; }
+.toc-item .pg { font-family: 'Courier New', monospace; font-size: 8.5pt; color: #64748b; }
+.toc-sub { padding-left: 20px; font-size: 8.5pt; }
+
 </style>
 </head>
 <body>
 
 <!-- ══════════════════════════════════════════════════════════════
-     COVER PAGE
+     FIXED HEADER & FOOTER (PAGES 2+)
 ══════════════════════════════════════════════════════════════ -->
-<div class="cover">
-  <div class="cover-top-bar"></div>
-  <div class="cover-glow"></div>
-  <div class="cover-body">
-    <div class="cover-badge">
-      <span class="dot"></span>
-      AI for Industrial EV Supply Chain &amp; Asset Intelligence
-    </div>
-    <div class="cover-logo-row">
-      <div class="cover-logo-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline>
-        </svg>
-      </div>
-      <div class="cover-wordmark">Volt<span>Chain</span></div>
-    </div>
-    <div class="cover-title">Project Submission<br/><span class="accent">Technical Guide</span></div>
-    <div class="cover-subtitle">
-      A mission-critical AI intelligence dashboard providing sub-millisecond predictive maintenance and unified supply chain visibility.
-    </div>
-    <div class="cover-stats">
-      <div>
-        <div class="cover-stat-val">99.7%</div>
-        <div class="cover-stat-lbl">Uptime SLA</div>
-      </div>
-      <div>
-        <div class="cover-stat-val">&lt;2ms</div>
-        <div class="cover-stat-lbl">API Latency</div>
-      </div>
-      <div>
-        <div class="cover-stat-val">67</div>
-        <div class="cover-stat-lbl">Tests Passing</div>
-      </div>
-      <div>
-        <div class="cover-stat-val">12.4t+</div>
-        <div class="cover-stat-lbl">CO2 Offsets</div>
-      </div>
-    </div>
-    <div class="cover-meta">
-      <div class="cover-meta-left">
-        <strong>Author:</strong> Saurabh Kumar<br/>
-        <strong>Repository:</strong> github.com/SaurabhForge/VoltChain<br/>
-        <strong>Live Demo:</strong> saurabhforge-voltchain-frontend.onrender.com
-      </div>
-      <div class="cover-version">HACKATHON SUBMISSION REFERENCE</div>
-    </div>
-  </div>
-  <div class="cover-bottom-bar"></div>
+<div class="header-fixed">
+  <span>VoltChain — Technical Report</span>
+  <span>CONFIDENTIAL</span>
+</div>
+
+<div class="footer-fixed">
+  <span>github.com/SaurabhForge/VoltChain</span>
+  <span>Hackathon Project Submission Guide</span>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     01 — EXECUTIVE SUMMARY
+     PAGE 1 — COVER PAGE
 ══════════════════════════════════════════════════════════════ -->
-<div class="chapter">
-  <div class="section-label">01 — Elevator Pitch</div>
+<div class="cover">
+  <div class="cover-top">
+    <div class="cover-badge">
+      <span class="dot"></span>
+      Industrial EV Supply Chain &amp; Asset Intelligence
+    </div>
+    <div class="cover-title">Volt<span>Chain</span> Technical Reference</div>
+    <div class="cover-line"></div>
+    <div class="cover-subtitle">
+      A mission-critical AI intelligence dashboard providing sub-millisecond predictive maintenance and unified supply chain visibility.
+    </div>
+  </div>
+  
+  <div class="cover-middle">
+    <div class="cover-stat">
+      <div class="cover-stat-val">99.7%</div>
+      <div class="cover-stat-lbl">Uptime target</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-val">&lt;2ms</div>
+      <div class="cover-stat-lbl">Core Latency</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-val">67</div>
+      <div class="cover-stat-lbl">Tests Passing</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-val">12.4t+</div>
+      <div class="cover-stat-lbl">CO2 Offsets</div>
+    </div>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="cover-meta">
+      <strong>Author:</strong> Saurabh Kumar<br/>
+      <strong>Repository:</strong> github.com/SaurabhForge/VoltChain<br/>
+      <strong>Live Demo:</strong> saurabhforge-voltchain-frontend.onrender.com
+    </div>
+    <div class="cover-tag">SUBMISSION REFERENCE</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PAGE 2 — TABLE OF CONTENTS & EXECUTIVE SUMMARY
+══════════════════════════════════════════════════════════════ -->
+<div class="chapter" style="margin-top: 0;">
+  <div class="section-label">01 — Overview</div>
   <div class="section-title">Executive Summary</div>
+
+  <div class="toc-container">
+    <div class="toc-item"><span class="num">01</span><span class="title">Executive Summary (The "Elevator Pitch")</span><span class="pg">2</span></div>
+    <div class="toc-item"><span class="num">02</span><span class="title">Technical Architecture &amp; Innovation</span><span class="pg">3</span></div>
+    <div class="toc-item"><span class="num">03</span><span class="title">Reliability &amp; Testing (Proof of Quality)</span><span class="pg">4</span></div>
+    <div class="toc-item"><span class="num">04</span><span class="title">Alignment &amp; Accelerating Net Zero</span><span class="pg">5</span></div>
+    <div class="toc-item"><span class="num">05</span><span class="title">Demo &amp; Judge's Quick Start Guide</span><span class="pg">5</span></div>
+  </div>
 
   <h3>The Problem</h3>
   <p>
-    Industrial EV fleets face catastrophic downtime due to a complete lack of real-time State of Health (SOH) visibility and fragmented, siloed supply chain data. Battery failures are currently discovered reactively—typically after a vehicle breaks down on the road—costing operators upwards of $1.4M per incident in logistics disruptions, cargo delays, and unplanned maintenance overhead.
+    Industrial EV fleets face catastrophic downtime due to a complete lack of real-time SOH visibility and fragmented, siloed supply chain data. Battery failures are currently discovered reactively—typically after a vehicle breaks down on the road—costing operators upwards of $1.4M per incident in logistics disruptions, cargo delays, and unplanned maintenance overhead.
   </p>
 
   <h3>The Solution</h3>
@@ -558,21 +605,14 @@ figcaption {
   </p>
 
   <div class="highlight-box">
-    <p><strong>Core Objective:</strong> To transition EV fleet operations from a reactive failure recovery model into a highly predictable, automated, and carbon-aware scheduling workflow.</p>
+    <p><strong>Net Zero Impact:</strong> When the AI detects abnormal thermal stress or a rapid rise in internal resistance, it triggers pre-emptive maintenance. Extending battery life by 15-20% directly offsets the Scope 3 emissions associated with cell manufacturing.</p>
   </div>
-
-  <h3>Operational &amp; Ecological Impact</h3>
-  <ul>
-    <li><strong>99.7%+ Target Uptime:</strong> Achieved via multi-tier fallback loops, per-connection Server-Sent Events (SSE) state cloning, and global error interceptors.</li>
-    <li><strong>Sub-2ms In-Memory Latency:</strong> Enabled by a stateless backend design which manages telemetry streams in-process without I/O serialization bottlenecks.</li>
-    <li><strong>Dynamic Carbon Tracking:</strong> Directly tracks <strong>12.4+ tons of CO₂ offsets</strong> in real-time, connecting daily route optimization and battery lifespan extensions to corporate Scope 3 emissions targets.</li>
-  </ul>
 
   ${imgTag(screenshots.hero, 'VoltChain Landing Page', 'Fig 1.1 — VoltChain landing page showcasing live metrics overlays and interactive WebGL background')}
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     02 — TECHNICAL ARCHITECTURE & INNOVATION
+     PAGE 3 — TECHNICAL ARCHITECTURE & INNOVATION
 ══════════════════════════════════════════════════════════════ -->
 <div class="chapter">
   <div class="section-label">02 — Engineering &amp; AI</div>
@@ -584,10 +624,9 @@ figcaption {
   </p>
 
 <pre>
-  [CDN-Served Static Frontend] <──(SSE Telemetry /api/telemetry/stream)─── [Express 5 API Service]
-  [SPA Client-Side Controllers] ───(REST Fetch: Stats/Timeline/QMS)───> [In-Memory State Engine]
-  [D3.js Graph & Three.js WebGL] <───(REST Fetch: Graph Nodes)─────────> [Isolated State Cloner]
-  [Chat AbortController Interceptor] ─(POST /api/analyst/chat Validate)─> [Structured JSON Logger]
+  [CDN Static Frontend] <──(SSE Telemetry /api/telemetry/stream)─── [Express 5 API Service]
+  [SPA Client Controllers] ───(REST Fetch: Stats/Timeline/QMS)───> [In-Memory State Engine]
+  [D3.js Graph & Three.js] <───(REST Fetch: Graph Nodes)─────────> [Isolated State Cloner]
 </pre>
 
   <div class="info-box">
@@ -610,7 +649,7 @@ figcaption {
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     03 — RELIABILITY & TESTING
+     PAGE 4 — RELIABILITY & TESTING
 ══════════════════════════════════════════════════════════════ -->
 <div class="chapter">
   <div class="section-label">03 — Quality Assurance</div>
@@ -669,57 +708,27 @@ figcaption {
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     04 — ALIGNMENT & ACCELERATING NET ZERO
+     PAGE 5 — NET ZERO & JUDGE'S GUIDE
 ══════════════════════════════════════════════════════════════ -->
 <div class="chapter">
-  <div class="section-label">04 — Ecological Impact</div>
-  <div class="section-title">Alignment: Accelerating Net Zero</div>
+  <div class="section-label">04 &amp; 05 — Impact &amp; Evaluation</div>
+  <div class="section-title">Evaluation Guide &amp; Net Zero Impact</div>
 
+  <h3>Alignment: Accelerating Net Zero</h3>
   <p>
     The production of a single EV battery packs a significant environmental footprint, generating substantial greenhouse gas emissions before the vehicle even drives its first mile. Extending the operational lifespan of these batteries is a key lever in reducing global industrial carbon footprints.
   </p>
-
-  <h3>Extending Battery Lifespan via AI</h3>
   <p>
     VoltChain's MCP AI Analyst directly tackles this challenge by moving fleet dispatchers from reactive maintenance to proactive preservation. By tracking variables such as cathode temperature, internal resistance, and cycle counts, the platform calculates continuous SOH degradation curves.
   </p>
 
-  <div class="highlight-box">
-    <p><strong>Net Zero Impact:</strong> When the AI detects abnormal thermal stress or a rapid rise in internal resistance, it triggers pre-emptive maintenance. Extending battery life by 15-20% directly offsets the Scope 3 emissions associated with cell manufacturing and delays replacement cycles by up to 2.5 years.</p>
-  </div>
-
-  <h3>Integrating Route Optimisation with Carbon Outflow</h3>
-  <p>
-    The platform's command dashboard features a live carbon accounting section that dynamically recalculates CO₂ offsets. Dispatchers can use the timeline slider of the <strong>Temporal Time Capsule</strong> to scrub between past, present, and predictive quarters. This enables them to visualize how rerouting vehicles or scheduling charging sessions during off-peak hours improves the grid-carbon footprint.
-  </p>
-
-  ${imgTag(screenshots.timecapsule, 'Temporal Time Capsule scrubber', 'Fig 4.1 — Time Capsule showing historical Q1 snapshot with live event log and corresponding card values')}
-</div>
-
-<!-- ══════════════════════════════════════════════════════════════
-     05 — DEMO & QUICK START GUIDE
-══════════════════════════════════════════════════════════════ -->
-<div class="chapter">
-  <div class="section-label">05 — Guide for Judges</div>
-  <div class="section-title">Demo &amp; Quick Start Guide</div>
-
-  <h3>Direct Access Links</h3>
-  <ul>
-    <li><strong>Production Live URL:</strong> <a href="https://saurabhforge-voltchain-frontend.onrender.com" target="_blank">saurabhforge-voltchain-frontend.onrender.com</a></li>
-    <li><strong>API Service Base:</strong> <a href="https://saurabhforge-voltchain-api.onrender.com/health" target="_blank">saurabhforge-voltchain-api.onrender.com/health</a></li>
-    <li><strong>Source Repository:</strong> <a href="https://github.com/SaurabhForge/VoltChain" target="_blank">github.com/SaurabhForge/VoltChain</a></li>
-  </ul>
-
   <h3>Judge's Evaluation Flow (Step-by-Step)</h3>
   <ol>
     <li>
-      <strong>Open the Live URL:</strong> Open the frontend link. Note the dark-mode landing screen. The active network graph in the background dynamically scales to fit your browser window.
-    </li>
-    <li>
-      <strong>Access the Dashboard:</strong> Scroll down to the <em>Live Command Dashboard</em> section.
+      <strong>Access the Dashboard:</strong> Scroll down to the <em>Live Command Dashboard</em> section at <a href="https://saurabhforge-voltchain-frontend.onrender.com" target="_blank">saurabhforge-voltchain-frontend.onrender.com</a>.
       <ul>
         <li>Observe the <strong>Uptime status badge</strong>: it will show <span class="badge badge-green">LIVE</span> if connected to the API, and <span class="badge badge-amber">OFFLINE</span> if running client-side simulation.</li>
-        <li>Watch the KPI cards (e.g. active vehicles, average SOH, CO₂ saved) and the SVG chart. They will update every 2 seconds via the live telemetry feed.</li>
+        <li>Watch the KPI cards and the SVG chart. They will update every 2 seconds via the live telemetry feed.</li>
       </ul>
     </li>
     <li>
@@ -730,9 +739,6 @@ figcaption {
       </ul>
     </li>
     <li>
-      <strong>Navigate sidebar tabs:</strong> Click on the <strong>Fleet</strong> or <strong>MCP AI</strong> tabs in the collapsible sidebar. The four KPI metrics will instantly update to show fleet utilization or AI performance metrics.
-    </li>
-    <li>
       <strong>Scrub the Time Capsule:</strong> Scroll down to the <em>Temporal Time Capsule</em>. Drag the slider from <strong>TODAY</strong> back to <strong>Q1-2024</strong>. Observe how the events log shifts to historical incidents, and see the dashboard's active vehicle counts change accordingly.
     </li>
     <li>
@@ -740,7 +746,9 @@ figcaption {
     </li>
   </ol>
 
-  <div class="warning-box">
+  ${imgTag(screenshots.timecapsule, 'Temporal Time Capsule scrubber', 'Fig 4.1 — Time Capsule showing historical Q1 snapshot with live event log')}
+
+  <div class="warning-box" style="margin-top: 10px;">
     <p><strong>Note on Free Tier Services:</strong> Render's free tier spins down the backend API web service after 15 minutes of inactivity. When loading the site for the first time, the API may take 30-50 seconds to warm up. The frontend handles this delay gracefully, showing an "Offline" status before transitioning to "Live" once the backend responds.</p>
   </div>
 </div>
@@ -759,29 +767,21 @@ const browser2 = await puppeteer.launch({
   args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
 });
 const page2 = await browser2.newPage();
-await page2.setContent(html, { waitUntil: 'networkidle0', timeout: 30000 });
+await page2.setContent(html, { waitUntil: 'load', timeout: 30000 });
 
 // Wait for any web fonts to render
-await new Promise(r => setTimeout(r, 2000));
+await new Promise(r => setTimeout(r, 2500));
 
 await page2.pdf({
   path: PDF_OUT,
   format: 'A4',
   printBackground: true,
-  displayHeaderFooter: true,
-  headerTemplate: `
-    <div style="width:100%;font-family:Arial,sans-serif;font-size:7pt;color:#94a3b8;display:flex;justify-content:space-between;padding:0 20mm;">
-      <span>VoltChain — Hackathon Submission Technical Reference</span>
-      <span style="color:#00d084;font-weight:bold;">CONFIDENTIAL</span>
-    </div>`,
-  footerTemplate: `
-    <div style="width:100%;font-family:Arial,sans-serif;font-size:7pt;color:#94a3b8;display:flex;justify-content:space-between;padding:0 20mm;">
-      <span>github.com/SaurabhForge/VoltChain</span>
-      <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
-    </div>`,
-  margin: { top: '22mm', bottom: '22mm', left: '20mm', right: '20mm' },
+  preferCSSPageSize: true, // Crucial for respecting CSS page margins
+  displayHeaderFooter: false, // We render headers/footers in the HTML to avoid page 1 overlay issues
+  margin: { top: 0, bottom: 0, left: 0, right: 0 }
 });
 
 await browser2.close();
 console.log('\n🎉 PDF generated:', PDF_OUT);
 console.log('\nDone! Open the PDF from:', PDF_OUT);
+spawn('node', ['-e', 'process.exit(0)']); // ensure no dangling processes
