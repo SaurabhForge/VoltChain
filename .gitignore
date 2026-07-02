@@ -5,4 +5,25 @@ yarn-debug.log*
 yarn-error.log*
 .env
 .env.*
+.env.local
 
+# Test & coverage output
+coverage/
+.nyc_output/
+
+# Build artifacts
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Render / deployment
+.render-buildinfo.json

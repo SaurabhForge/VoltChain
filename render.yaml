@@ -11,8 +11,12 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # CORS_ORIGIN: lock to the Render frontend URL in production (F6 fix)
+      # Set this to your Render static site URL, e.g.:
+      #   https://saurabhforge-voltchain-frontend.onrender.com
+      # For the hackathon demo, wildcard is acceptable:
       - key: CORS_ORIGIN
-        value: "*"
+        value: "https://saurabhforge-voltchain-frontend.onrender.com"
 
   - type: web
     name: saurabhforge-voltchain-frontend
@@ -23,6 +27,17 @@ services:
     envVars:
       - key: VOLTCHAIN_API_BASE
         value: https://saurabhforge-voltchain-api.onrender.com
+    headers:
+      # Security headers for the frontend
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
     routes:
       - type: rewrite
         source: /*

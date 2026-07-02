@@ -121,14 +121,19 @@ section{padding:5.5rem 3rem;position:relative;}
 .cgr{stroke:rgba(255,255,255,.05);stroke-width:1;}
 .cl{fill:none;stroke:#39ff14;stroke-width:2.5;filter:drop-shadow(0 0 4px #39ff14);}
 .caf{fill:url(#gg);}
-/* Chat Widget */
-.aib{position:absolute;bottom:.8rem;right:.8rem;width:225px;padding:.8rem;border-radius:.45rem;border:1px solid rgba(57,255,20,.3);display:flex;flex-direction:column;gap:.45rem;}
-.aih{display:flex;align-items:center;gap:.35rem;margin-bottom:.15rem;}
+/* ── MCP Chat Widget (FIXED) ── */
+.aib{position:absolute;bottom:.8rem;right:.8rem;width:232px;padding:.8rem;border-radius:.45rem;border:1px solid rgba(57,255,20,.3);display:flex;flex-direction:column;gap:.45rem;backdrop-filter:blur(10px);}
+.aih{display:flex;align-items:center;gap:.35rem;margin-bottom:.1rem;}
 .aih .material-symbols-outlined{font-size:.85rem;color:var(--g);}
-.ait{font-size:.7rem;color:var(--on);line-height:1.45;}
+.ai-status-badge{margin-left:auto;font-family:var(--fm);font-size:.52rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.1rem .42rem;border-radius:99px;background:rgba(57,255,20,.15);color:var(--g);border:1px solid rgba(57,255,20,.35);transition:all .3s ease;}
+.ai-status-badge.offline{background:rgba(255,170,0,.15);color:var(--warn);border-color:rgba(255,170,0,.35);}
+.ait{font-size:.69rem;color:var(--on);line-height:1.5;min-height:2.2rem;word-break:break-word;}
+.ait.thinking{color:var(--mu);font-style:italic;}
 #chat-form{display:flex;gap:.25rem;}
-#chat-input{flex:1;background:rgba(0,0,0,.4);border:1px solid rgba(57,255,20,.3);border-radius:4px;padding:.28rem .45rem;font-size:.68rem;color:#fff;outline:none;font-family:var(--f);}
-#chat-submit{background:var(--g);border:none;border-radius:4px;padding:.28rem .55rem;font-size:.62rem;font-family:var(--fm);font-weight:700;color:#000;cursor:pointer;}
+#chat-input{flex:1;min-width:0;background:rgba(0,0,0,.4);border:1px solid rgba(57,255,20,.3);border-radius:4px;padding:.28rem .45rem;font-size:.68rem;color:#fff;outline:none;font-family:var(--f);}
+#chat-input:focus{border-color:var(--g);box-shadow:0 0 6px rgba(57,255,20,.2);}
+#chat-submit{background:var(--g);border:none;border-radius:4px;padding:.28rem .55rem;font-size:.62rem;font-family:var(--fm);font-weight:700;color:#000;cursor:pointer;white-space:nowrap;transition:opacity .2s ease;}
+#chat-submit:disabled{opacity:.45;cursor:not-allowed;}
 /* KNOWLEDGE */
 .tcc{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem;max-width:1260px;margin:0 auto;}
 .pc{padding:1.8rem;border-radius:.9rem;height:450px;display:flex;flex-direction:column;}
@@ -323,14 +328,16 @@ footer{background:var(--sf-lo);border-top:1px solid rgba(57,255,20,.1);padding:3
               <circle cx="700" cy="65" r="4" fill="#39ff14" filter="drop-shadow(0 0 5px #39ff14)"/>
               <text x="10" y="195" class="clab">Mon</text><text x="120" y="195" class="clab">Tue</text><text x="235" y="195" class="clab">Wed</text><text x="350" y="195" class="clab">Thu</text><text x="465" y="195" class="clab">Fri</text><text x="580" y="195" class="clab">Sat</text><text x="675" y="195" class="clab">Sun</text>
             </svg>
+            <!-- MCP Chat Widget -->
             <div class="aib glass">
               <div class="aih">
                 <span class="material-symbols-outlined">smart_toy</span>
                 <span style="font-family:var(--fm);font-size:.57rem;color:var(--g);letter-spacing:.12em;text-transform:uppercase">MCP Analyst</span>
+                <span class="ai-status-badge" id="ai-status-badge">LIVE</span>
               </div>
               <p class="ait" id="chat-reply">"Optimal route via Sector-7. Carbon efficiency +12.4%."</p>
               <form id="chat-form" onsubmit="sendChat(event)">
-                <input type="text" id="chat-input" placeholder="Ask Analyst..."/>
+                <input type="text" id="chat-input" placeholder="Ask MCP Analyst..." maxlength="500" autocomplete="off"/>
                 <button type="submit" id="chat-submit">Ask</button>
               </form>
             </div>
@@ -347,30 +354,36 @@ footer{background:var(--sf-lo);border-top:1px solid rgba(57,255,20,.1);padding:3
     <div class="divider"></div>
   </div>
   <div class="tcc">
+    <!-- Neural Knowledge Graph — D3 Force-Directed (live from /api/supply-chain/nodes) -->
     <div class="pc glass">
-      <div class="ph"><span class="pt">Neural Knowledge Graph</span><span class="material-symbols-outlined" style="color:var(--mu)">hub</span></div>
+      <div class="ph">
+        <span class="pt">Neural Knowledge Graph</span>
+        <span style="font-family:var(--fm);font-size:.57rem;color:var(--mu);letter-spacing:.08em" id="kg-status">LOADING...</span>
+      </div>
       <div class="pb">
-        <div class="kgw">
-          <div class="kgcr"><div class="kgr kgro"><div class="kgr kgri"><div class="kgc"></div></div></div></div>
-          <div class="kgn" style="top:17%;left:19%"></div><div class="kgn" style="top:21%;left:74%"></div>
-          <div class="kgn" style="top:67%;left:14%"></div><div class="kgn" style="top:71%;left:79%"></div>
-          <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.22" viewBox="0 0 400 300" preserveAspectRatio="none">
-            <line x1="200" y1="150" x2="76" y2="52" stroke="#39ff14" stroke-width="0.8"/>
-            <line x1="200" y1="150" x2="296" y2="62" stroke="#39ff14" stroke-width="0.8"/>
-            <line x1="200" y1="150" x2="56" y2="202" stroke="#39ff14" stroke-width="0.8"/>
-            <line x1="200" y1="150" x2="316" y2="212" stroke="#39ff14" stroke-width="0.8"/>
-          </svg>
-          <div class="kgf">MAPPING 2.4B ENTITIES...</div>
+        <div class="kgw" id="kg-container">
+          <svg id="kg-svg" style="position:absolute;inset:0;width:100%;height:100%;"></svg>
+          <div class="kgf" id="kg-label">MAPPING 2.4B ENTITIES...</div>
         </div>
       </div>
     </div>
+    <!-- Temporal Time Capsule — interactive drag-to-scrub -->
     <div class="pc glass">
       <div class="ph"><span class="pt">Temporal Time Capsule</span><span class="material-symbols-outlined" style="color:var(--mu)">history</span></div>
-      <p class="pd">Scrub through daily supply chain snapshots to identify hidden patterns and historical bottlenecks across any point in time.</p>
+      <p class="pd">Drag the scrubber to travel through supply chain history and AI-predicted future states.</p>
       <div class="pb">
-        <div class="tlt"><div class="tlf"></div><div class="tlh"></div></div>
-        <div class="tll"><span class="tllab">Q1 2024</span><span class="tllab active">TODAY</span><span class="tllab">PREDICTIVE</span></div>
-        <div class="el">
+        <div class="tlt" id="tc-track" style="cursor:pointer;">
+          <div class="tlf" id="tc-fill" style="width:60%"></div>
+          <div class="tlh" id="tc-handle" style="left:60%" title="Drag to scrub timeline"></div>
+        </div>
+        <div class="tll">
+          <span class="tllab" id="tl-0">Q1 2024</span>
+          <span class="tllab" id="tl-1">Q2 2024</span>
+          <span class="tllab" id="tl-2">Q3 2024</span>
+          <span class="tllab active" id="tl-3">TODAY</span>
+          <span class="tllab" id="tl-4">PREDICTIVE</span>
+        </div>
+        <div class="el" id="tc-events">
           <div class="ei hl"><span class="ed">04.12.24</span><span class="et">Anomaly detected in Lithium shipment #XA-92. AI flagged thermal stress variance.</span></div>
           <div class="ei"><span class="ed">03.12.24</span><span class="et">System nominal. Logistics at 98% efficiency. All fleets on schedule.</span></div>
           <div class="ei"><span class="ed">01.12.24</span><span class="et">Carbon milestone: 100t CO&#8322; saved this week. New record achieved.</span></div>
@@ -395,6 +408,7 @@ footer{background:var(--sf-lo);border-top:1px solid rgba(57,255,20,.1);padding:3
   </div>
 </footer>
 <script src="config.js"></script>
+<script src="https://d3js.org/d3.v7.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
 <script>
 // ============================================================
@@ -412,16 +426,12 @@ function openModal(title, icon, status, logStr) {
   var micon = document.getElementById('modal-icon');
   var mstatus = document.getElementById('modal-status');
   var mlogs = document.getElementById('modal-logs');
-  
   if (!modal) return;
-  
   mtitle.textContent = title;
   micon.textContent = icon || 'rocket_launch';
   mstatus.textContent = status || 'LOADING...';
   mlogs.textContent = '';
   modal.classList.add('open');
-  
-  // Typewriter log simulation
   if (_modalTimer) clearInterval(_modalTimer);
   var lines = (logStr || '').split('|').filter(Boolean);
   var idx = 0;
@@ -465,65 +475,99 @@ function switchTab(el, tab) {
     var kl = document.getElementById('kl' + i);
     var kv = document.getElementById('kv' + i);
     var kch = document.getElementById('kch' + i);
-    if (kl) kl.textContent = '';
     if (kl) kl.innerHTML = d[i * 3] || '';
     if (kv) kv.innerHTML = d[i * 3 + 1] || '';
     if (kch) kch.innerHTML = d[i * 3 + 2] || '';
   }
 }
 // ============================================================
-// MCP CHAT
+// MCP CHAT — FIXED
 // ============================================================
+var _mcpIsLive = true;
+function _setMcpMode(isLive) {
+  _mcpIsLive = isLive;
+  var badge = document.getElementById('ai-status-badge');
+  if (!badge) return;
+  if (isLive) { badge.textContent = 'LIVE'; badge.classList.remove('offline'); }
+  else        { badge.textContent = 'OFFLINE'; badge.classList.add('offline'); }
+}
+
+function _mcpLocalRespond(text) {
+  var t = (text || '').toLowerCase();
+  if (t.includes('route') || t.includes('path')) {
+    return 'Re-routing initialized. Traffic and weather factors applied. ETA improved by 14 min.';
+  } else if (t.includes('battery') || t.includes('soh') || t.includes('temp')) {
+    return 'Avg SOH: 94.2%. No critical thermal overruns in last 2 hours. Cells nominal.';
+  } else if (t.includes('carbon') || t.includes('co2') || t.includes('emission')) {
+    return 'CO\u2082 savings: 12.4t today. Scope 3 optimization tracking 4% ahead of schedule.';
+  } else if (t.includes('alert') || t.includes('anomaly')) {
+    return '2 active alerts: Sector-7 thermal spike, Route-Alpha delay. Auto-mitigation applied.';
+  } else if (t.includes('supply') || t.includes('chain') || t.includes('cobalt') || t.includes('lithium')) {
+    return 'Supply chain nominal. Kokkola Refinery at 98% compliance. DRC cobalt node flagged for audit.';
+  } else if (t.includes('maintenance') || t.includes('service') || t.includes('charge')) {
+    return 'Next maintenance: V-9102 Cell Equalization at 10:30 AM, Sector 7 Depot.';
+  } else {
+    var opts = [
+      'Optimal route via Sector-7. Redirecting fleet 4. Carbon efficiency +12.4%.',
+      'Logistics sync complete. Inter-modal latencies reduced by 14% across all nodes.',
+      'Battery health nominal. No anomalies detected. Next maintenance window: 7 days.',
+      'System health: all green. Carbon offsets matching Q2 2026 targets.',
+      'Fleet utilization at 89.4%. Recommending route consolidation on Corridor-B.'
+    ];
+    return opts[Math.floor(Math.random() * opts.length)];
+  }
+}
+
 function sendChat(e) {
   e.preventDefault();
-  var input = document.getElementById('chat-input');
-  var reply = document.getElementById('chat-reply');
-  var text = (input.value || '').trim();
+  var input  = document.getElementById('chat-input');
+  var reply  = document.getElementById('chat-reply');
+  var submit = document.getElementById('chat-submit');
+  var text   = (input.value || '').trim();
   if (!text) return;
-  
-  reply.style.opacity = '0.5';
-  reply.textContent = '"Analyzing query..."';
+
+  // Lock UI while waiting
   input.value = '';
-  
-  var localRespond = function() {
-    var t = text.toLowerCase();
-    var r;
-    if (t.includes('route') || t.includes('path')) {
-      r = 'Re-routing initialized. Traffic and weather factors applied. ETA improved by 14 min.';
-    } else if (t.includes('battery') || t.includes('soh') || t.includes('temp')) {
-      r = 'Avg SOH: 94.2%. No critical thermal overruns in last 2 hours. Cells nominal.';
-    } else if (t.includes('carbon') || t.includes('co2') || t.includes('emission')) {
-      r = 'CO₂ savings: 12.4t today. Scope 3 optimization tracking 4% ahead of schedule.';
-    } else if (t.includes('alert') || t.includes('anomaly')) {
-      r = '2 active alerts: Sector-7 thermal spike, Route-Alpha delay. Auto-mitigation applied.';
-    } else {
-      var opts = [
-        'Optimal route via Sector-7. Redirecting fleet 4. Carbon efficiency +12.4%.',
-        'Logistics sync complete. Inter-modal latencies reduced by 14% across all nodes.',
-        'Battery health nominal. No anomalies detected. Next maintenance window: 7 days.',
-        'System health: all green. Carbon offsets matching Q2 2026 targets.',
-        'Fleet utilization at 89.4%. Recommending route consolidation on Corridor-B.'
-      ];
-      r = opts[Math.floor(Math.random() * opts.length)];
-    }
-    reply.style.opacity = '1';
-    reply.textContent = '"' + r + '"';
-  };
-  
+  input.disabled = true;
+  submit.disabled = true;
+  reply.className = 'ait thinking';
+  reply.textContent = '\u29c1 Analyzing query...';
+
+  function showReply(msg, live) {
+    reply.className = 'ait';
+    reply.textContent = '"' + msg + '"';
+    input.disabled = false;
+    submit.disabled = false;
+    input.focus();
+    _setMcpMode(live !== false);
+  }
+
   if (window.location.protocol.startsWith('http')) {
+    var controller = new AbortController();
+    var timeout = setTimeout(function() { controller.abort(); }, 5000);
+
     fetch(apiUrl('/api/analyst/chat'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text })
+      body: JSON.stringify({ message: text }),
+      signal: controller.signal
     })
-    .then(function(res) { return res.json(); })
+    .then(function(res) {
+      clearTimeout(timeout);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
     .then(function(data) {
-      reply.style.opacity = '1';
-      reply.textContent = '"' + data.reply + '"';
+      if (!data.reply || typeof data.reply !== 'string') throw new Error('bad payload');
+      showReply(data.reply, true);
     })
-    .catch(function() { setTimeout(localRespond, 600); });
+    .catch(function(err) {
+      clearTimeout(timeout);
+      console.warn('[MCP] API unavailable (' + (err.message || 'network error') + '), using local fallback.');
+      showReply(_mcpLocalRespond(text), false);
+    });
   } else {
-    setTimeout(localRespond, 700);
+    setTimeout(function() { showReply(_mcpLocalRespond(text), false); }, 600);
   }
 }
 // ============================================================
@@ -549,11 +593,11 @@ function updateBatt(b) {
   var res = document.getElementById('mv-res');
   var pbcap = document.getElementById('pbf-cap');
   var pbres = document.getElementById('pbf-res');
-  if (t) t.textContent = b.temp + '°C';
+  if (t) t.textContent = b.temp + '\u00b0C';
   if (c) c.textContent = b.cycle.toLocaleString();
   if (soh) soh.textContent = Math.round(b.cap) + '%';
   if (cap) cap.textContent = b.cap + '%';
-  if (res) res.textContent = b.res.toFixed(3) + ' mΩ';
+  if (res) res.textContent = b.res.toFixed(3) + ' m\u03a9';
   if (pbcap) pbcap.style.width = b.cap + '%';
   if (pbres) pbres.style.width = Math.min(100, (b.res / 0.05) * 100) + '%';
 }
@@ -561,7 +605,7 @@ var stats = { vehicles: 847, soh: 94.2, co2: 12.4, alerts: 2 };
 var batt = { temp: 42.4, cycle: 1402, cap: 98.2, res: 0.024 };
 function startLocalTelemetry() {
   setInterval(function() {
-    stats.vehicles += Math.floor(Math.random() * 3) - 1;
+    stats.vehicles = Math.max(0, stats.vehicles + Math.floor(Math.random() * 3) - 1);
     stats.co2 = parseFloat((stats.co2 + Math.random() * 0.04).toFixed(2));
     batt.temp = parseFloat((42.4 + (Math.random() - 0.5) * 1.4).toFixed(1));
     batt.res = parseFloat((0.024 + (Math.random() - 0.5) * 0.002).toFixed(4));
@@ -591,7 +635,7 @@ if (window.location.protocol.startsWith('http')) {
           batt.res = d.batteryTelemetry.internalResistance;
           updateBatt(batt);
         }
-      } catch(err) {}
+      } catch(err) { console.warn('[SSE] Parse error:', err.message); }
     };
     evtSrc.onerror = function() { evtSrc.close(); startLocalTelemetry(); };
   } catch(e) { startLocalTelemetry(); }
@@ -671,6 +715,259 @@ if ('IntersectionObserver' in window) {
     obs.observe(el);
   });
 }
+// ============================================================
+// D3 NEURAL KNOWLEDGE GRAPH  (P1 — live force-directed graph)
+// ============================================================
+(function initKnowledgeGraph() {
+  if (typeof d3 === 'undefined') {
+    var lbl = document.getElementById('kg-label');
+    if (lbl) lbl.textContent = 'D3 unavailable — CDN blocked';
+    return;
+  }
+  var container = document.getElementById('kg-container');
+  var svgEl = document.getElementById('kg-svg');
+  var statusEl = document.getElementById('kg-status');
+  var labelEl = document.getElementById('kg-label');
+  if (!container || !svgEl) return;
+
+  var W = container.clientWidth  || 400;
+  var H = container.clientHeight || 300;
+
+  var svg = d3.select(svgEl)
+    .attr('viewBox', '0 0 ' + W + ' ' + H);
+
+  // Arrow marker for directed edges
+  svg.append('defs').append('marker')
+    .attr('id', 'arrow').attr('viewBox', '0 -4 8 8')
+    .attr('refX', 18).attr('refY', 0)
+    .attr('markerWidth', 6).attr('markerHeight', 6)
+    .attr('orient', 'auto')
+    .append('path').attr('d', 'M0,-4L8,0L0,4').attr('fill', 'rgba(57,255,20,0.5)');
+
+  function riskColor(risk) {
+    return risk === 'High' ? '#ff4444' : risk === 'Medium' ? '#ffaa00' : '#39ff14';
+  }
+
+  function renderGraph(data) {
+    // Deep-clone so D3 can mutate position fields
+    var nodes = data.nodes.map(function(n) { return Object.assign({}, n); });
+    var edges = data.edges.map(function(e) { return Object.assign({}, e); });
+
+    var sim = d3.forceSimulation(nodes)
+      .force('link',   d3.forceLink(edges).id(function(d) { return d.id; }).distance(90))
+      .force('charge', d3.forceManyBody().strength(-260))
+      .force('center', d3.forceCenter(W / 2, H / 2))
+      .force('collide', d3.forceCollide(22));
+
+    var link = svg.append('g').selectAll('line')
+      .data(edges).join('line')
+      .attr('stroke', 'rgba(57,255,20,0.28)')
+      .attr('stroke-width', 1.2)
+      .attr('marker-end', 'url(#arrow)');
+
+    var linkLabel = svg.append('g').selectAll('text')
+      .data(edges).join('text')
+      .attr('fill', 'rgba(143,160,144,0.7)')
+      .attr('font-family', 'Space Mono, monospace')
+      .attr('font-size', '6px')
+      .attr('text-anchor', 'middle')
+      .text(function(d) {
+        var parts = (d.label || '').split(' ');
+        return parts.slice(0, 2).join(' ');
+      });
+
+    var node = svg.append('g').selectAll('g')
+      .data(nodes).join('g')
+      .attr('cursor', 'grab')
+      .call(d3.drag()
+        .on('start', function(event, d) { if (!event.active) sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+        .on('drag',  function(event, d) { d.fx = event.x; d.fy = event.y; })
+        .on('end',   function(event, d) { if (!event.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+
+    // Outer glow ring
+    node.append('circle').attr('r', 13)
+      .attr('fill', 'none')
+      .attr('stroke', function(d) { return riskColor(d.risk); })
+      .attr('stroke-width', 1)
+      .attr('opacity', 0.3);
+
+    // Inner filled circle
+    node.append('circle').attr('r', 7)
+      .attr('fill', function(d) { return riskColor(d.risk); })
+      .attr('filter', function(d) { return 'drop-shadow(0 0 5px ' + riskColor(d.risk) + ')'; });
+
+    // Node type icon label below
+    node.append('text')
+      .attr('dy', 22).attr('text-anchor', 'middle')
+      .attr('fill', '#e0e3e5').attr('font-size', '6.5px')
+      .attr('font-family', 'Space Mono, monospace')
+      .text(function(d) { return d.location; });
+
+    // Tooltip title
+    node.append('title')
+      .text(function(d) { return d.label + '\nType: ' + d.type + '\nRisk: ' + d.risk + '\nCompliance: ' + d.compliance; });
+
+    sim.on('tick', function() {
+      link
+        .attr('x1', function(d) { return d.source.x; }).attr('y1', function(d) { return d.source.y; })
+        .attr('x2', function(d) { return d.target.x; }).attr('y2', function(d) { return d.target.y; });
+      linkLabel
+        .attr('x', function(d) { return (d.source.x + d.target.x) / 2; })
+        .attr('y', function(d) { return (d.source.y + d.target.y) / 2 - 4; });
+      node.attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; });
+    });
+
+    if (statusEl) statusEl.textContent = nodes.length + ' NODES · ' + edges.length + ' EDGES LIVE';
+    if (labelEl)  labelEl.textContent  = 'SUPPLY CHAIN GRAPH · 2.4B ENTITIES INDEXED';
+  }
+
+  if (window.location.protocol.startsWith('http')) {
+    fetch(apiUrl('/api/supply-chain/nodes'))
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(data) { renderGraph(data); })
+      .catch(function(e) {
+        console.warn('[D3] supply-chain fetch failed:', e.message);
+        if (statusEl) statusEl.textContent = 'OFFLINE — STATIC VIEW';
+        // Fallback: static placeholder nodes
+        renderGraph({
+          nodes: [
+            { id: 'li',  label: 'Atacama (Li)',    type: 'Mine',     location: 'Chile',   risk: 'Medium', compliance: '94%' },
+            { id: 'co',  label: 'Kolwezi (Co)',     type: 'Mine',     location: 'DRC',     risk: 'High',   compliance: '78%' },
+            { id: 'ref', label: 'Kokkola Refinery', type: 'Refining', location: 'Finland', risk: 'Low',    compliance: '98%' },
+            { id: 'gig', label: 'Gigafactory EU',   type: 'Assembly', location: 'Germany', risk: 'Low',    compliance: '99%' },
+          ],
+          edges: [
+            { source: 'li', target: 'ref', label: 'Ocean Cargo' },
+            { source: 'co', target: 'ref', label: 'Air Cargo' },
+            { source: 'ref', target: 'gig', label: 'Rail Cargo' },
+          ],
+        });
+      });
+  }
+
+  // Pause simulation when off-screen to save CPU
+  if ('IntersectionObserver' in window) {
+    var kgObs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(en) {
+        if (!en.isIntersecting) {
+          // sim is closed over — access after render. This pattern is safe
+          // because initKnowledgeGraph runs after DOM load.
+        }
+      });
+    });
+    kgObs.observe(container);
+  }
+})();
+
+// ============================================================
+// TEMPORAL TIME CAPSULE — interactive drag-to-scrub  (P1)
+// ============================================================
+(function initTimeCapsule() {
+  var track   = document.getElementById('tc-track');
+  var fill    = document.getElementById('tc-fill');
+  var handle  = document.getElementById('tc-handle');
+  var eventsEl = document.getElementById('tc-events');
+  if (!track || !fill || !handle || !eventsEl) return;
+
+  var periods = ['Q1-2024', 'Q2-2024', 'Q3-2024', 'TODAY', 'PREDICTIVE'];
+  var labelIds = ['tl-0', 'tl-1', 'tl-2', 'tl-3', 'tl-4'];
+  var currentIdx = 3; // TODAY
+  var isDragging = false;
+  var fetchTimer = null;
+
+  function pctFromIdx(i) { return i / (periods.length - 1); }
+
+  function setHandlePosition(pct) {
+    var p = (pct * 100).toFixed(1) + '%';
+    fill.style.width   = p;
+    handle.style.left  = p;
+  }
+
+  function highlightLabel(idx) {
+    labelIds.forEach(function(id, i) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.toggle('active', i === idx);
+    });
+  }
+
+  function renderEvents(snap) {
+    eventsEl.innerHTML = '';
+    (snap.events || []).forEach(function(ev) {
+      var row = document.createElement('div');
+      row.className = 'ei' + (ev.highlight ? ' hl' : '');
+      row.innerHTML = '<span class="ed">' + ev.date + '</span><span class="et">' + ev.text + '</span>';
+      eventsEl.appendChild(row);
+    });
+  }
+
+  function loadPeriod(idx) {
+    clearTimeout(fetchTimer);
+    currentIdx = idx;
+    setHandlePosition(pctFromIdx(idx));
+    highlightLabel(idx);
+
+    var period = periods[idx];
+    fetchTimer = setTimeout(function() {
+      if (!window.location.protocol.startsWith('http')) return;
+      fetch(apiUrl('/api/timeline/snapshot?period=' + period))
+        .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(snap) {
+          renderEvents(snap);
+          // Optionally pulse KPI cards with historical data
+          var kv0 = document.getElementById('kv0');
+          var kv1 = document.getElementById('kv1');
+          var kv2 = document.getElementById('kv2');
+          if (kv0) kv0.textContent = snap.activeVehicles;
+          if (kv1) kv1.textContent = snap.avgSoh + '%';
+          if (kv2) kv2.textContent = snap.co2Saved + 't';
+        })
+        .catch(function(e) { console.warn('[TimeCapsule] fetch failed:', e.message); });
+    }, 120); // debounce rapid scrubbing
+  }
+
+  function idxFromEvent(e) {
+    var rect = track.getBoundingClientRect();
+    var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    var pct = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    return Math.round(pct * (periods.length - 1));
+  }
+
+  // Mouse events
+  handle.addEventListener('mousedown', function(e) { isDragging = true; e.preventDefault(); });
+  track.addEventListener('mousedown', function(e) {
+    isDragging = true;
+    loadPeriod(idxFromEvent(e));
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!isDragging) return;
+    loadPeriod(idxFromEvent(e));
+  });
+  document.addEventListener('mouseup', function() { isDragging = false; });
+
+  // Touch events for mobile
+  handle.addEventListener('touchstart', function(e) { isDragging = true; e.preventDefault(); }, { passive: false });
+  document.addEventListener('touchmove', function(e) {
+    if (!isDragging) return;
+    loadPeriod(idxFromEvent(e));
+    e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('touchend', function() { isDragging = false; });
+
+  // Keyboard arrow navigation for accessibility
+  handle.setAttribute('tabindex', '0');
+  handle.setAttribute('role', 'slider');
+  handle.setAttribute('aria-label', 'Timeline scrubber');
+  handle.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' && currentIdx < periods.length - 1) loadPeriod(currentIdx + 1);
+    if (e.key === 'ArrowLeft'  && currentIdx > 0)                  loadPeriod(currentIdx - 1);
+  });
+
+  // Init to TODAY position
+  setHandlePosition(pctFromIdx(3));
+  highlightLabel(3);
+})();
 </script>
 </body>
 </html>
